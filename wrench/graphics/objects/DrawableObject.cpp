@@ -63,11 +63,18 @@ void DrawableObject::draw() {
 	glBindVertexArray(VAO_);
 
 	auto ambientLight = AMBIENT_STRENGTH * AMBIENT_LIGHT_COLOUR;
+	glm::vec3 lightPos (1);
 
 	glUniform3fv(
 			glGetUniformLocation(programID_, "ambientLight"),
 			1,
 			glm::value_ptr(ambientLight)
+	);
+
+	glUniform3fv(
+			glGetUniformLocation(programID_, "lightPosition"),
+			1,
+			glm::value_ptr(lightPos)
 	);
 
 }
@@ -109,6 +116,8 @@ void DrawableObject::addNormalVectorsToVertices() {
 				second - first,
 				third - first
 		);
+
+		normal = glm::vec3(-normal.x,-normal.y,-normal.z);
 
 		vertices.push_back(first.x);
 		vertices.push_back(first.y);
