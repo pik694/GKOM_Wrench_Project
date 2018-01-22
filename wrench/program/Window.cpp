@@ -7,9 +7,9 @@
 //
 
 #include "Window.hpp"
-#include <functional>
 #include <string>
 #include <iostream>
+#include "graphics/objects/Wrench.hpp"
 
 using namespace wrench::program::window;
 
@@ -61,7 +61,20 @@ void Window::keyCallback(GLFWwindow *window, int key, int scancode, int action, 
     
     if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
         glfwSetWindowShouldClose(window, GL_TRUE);
-    
+
+    else if (key == GLFW_KEY_DOWN && action == GLFW_PRESS){
+        graphics::objects::Wrench::WRENCH->moveFromScrew();
+    }
+    else if (key == GLFW_KEY_UP && action == GLFW_PRESS){
+        graphics::objects::Wrench::WRENCH->moveToScrew();
+    }
+    else if (key == GLFW_KEY_LEFT && action == GLFW_PRESS){
+        graphics::objects::Wrench::WRENCH->rotateLeft();
+    }
+    else if (key == GLFW_KEY_RIGHT && action == GLFW_PRESS){
+        graphics::objects::Wrench::WRENCH->rotateRight();
+    }
+
 }
 
 
