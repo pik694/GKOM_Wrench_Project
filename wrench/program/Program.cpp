@@ -40,7 +40,6 @@ void Program::init() {
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 	glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
 
-
 }
 
 void Program::createWindow(const std::string &windowTitle, GLuint height, GLuint width) {
@@ -76,7 +75,6 @@ void Program::run() {
 	);
 
 
-
 	graphics::objects::Workshop workshop;
 	graphics::objects::Screw screw;
 	graphics::objects::Wrench wrench;
@@ -90,14 +88,20 @@ void Program::run() {
 	screw.setShaders(wrenchProgram.getProgramID());
 	wrench.setShaders(wrenchProgram.getProgramID());
 
+	glEnable(GL_DEPTH_TEST);
 
+	glm::vec3 cameraPos   = glm::vec3(0.0f, 0.0f,  3.0f);
+	glm::vec3 cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
+	glm::vec3 cameraUp    = glm::vec3(0.0f, 1.0f,  0.0f);
 
 	while (!window_->shouldClose()) {
 
 		glfwPollEvents();
 
 		glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
-		glClear(GL_COLOR_BUFFER_BIT);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+		glm::mat4 view = glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
 
 		wrench.updatePosition();
 

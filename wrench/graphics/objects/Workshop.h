@@ -5,6 +5,7 @@
 #ifndef GKOM_WRENCH_WORKSHOP_H
 #define GKOM_WRENCH_WORKSHOP_H
 
+#include <glm/glm.hpp>
 #include "DrawableObject.hpp"
 
 namespace wrench{

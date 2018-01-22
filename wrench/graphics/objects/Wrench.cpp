@@ -23,19 +23,19 @@ Wrench::Wrench():
 	screw_(nullptr)
 {
     vertices_ = {
-         0.091f,    0.05f,  0.0f,       0.0f, 0.0f, 0.0f,   0.0f, 0.0f,
-         0.1285f,   0.05f,  0.0f,       0.0f, 0.0f, 0.0f,   0.0f, 0.0f,
-         0.091f,   -0.055f, 0.0f,       0.0f, 0.0f, 0.0f,   0.0f, 0.0f,
-         0.1285f,  -0.076f, 0.0f,       0.0f, 0.0f, 0.0f,   0.0f, 0.0f,
-         0.05f,    -0.122f, 0.0f,       0.0f, 0.0f, 0.0f,   0.0f, 0.0f,
-         0.0f,     -0.107f, 0.0f,       0.0f, 0.0f, 0.0f,   0.0f, 0.0f,
-         0.05f,    -0.85f,  0.0f,       0.0f, 0.0f, 0.0f,   0.0f, 0.0f,
-        -0.05f,    -0.85f,  0.0f,       0.0f, 0.0f, 0.0f,   0.0f, 0.0f,
-        -0.05f,    -0.122f, 0.0f,       0.0f, 0.0f, 0.0f,   0.0f, 0.0f,
-        -0.091f,   -0.055f, 0.0f,       0.0f, 0.0f, 0.0f,   0.0f, 0.0f,
-        -0.1285f,  -0.076f, 0.0f,       0.0f, 0.0f, 0.0f,   0.0f, 0.0f,
-        -0.091f,    0.05f,  0.0f,       0.0f, 0.0f, 0.0f,   0.0f, 0.0f,
-        -0.1285f,   0.05f,  0.0f,       0.0f, 0.0f, 0.0f,   0.0f, 0.0f,
+         0.091f,    0.05f,  0.01f,    0.0f, 0.0f,
+         0.1285f,   0.05f,  0.01f,    0.0f, 0.0f,
+         0.091f,   -0.055f, 0.01f,    0.0f, 0.0f,
+         0.1285f,  -0.076f, 0.01f,    0.0f, 0.0f,
+         0.05f,    -0.122f, 0.01f,    0.0f, 0.0f,
+         0.0f,     -0.107f, 0.01f,    0.0f, 0.0f,
+         0.05f,    -0.85f,  0.01f,    0.0f, 0.0f,
+        -0.05f,    -0.85f,  0.01f,    0.0f, 0.0f,
+        -0.05f,    -0.122f, 0.01f,    0.0f, 0.0f,
+        -0.091f,   -0.055f, 0.01f,    0.0f, 0.0f,
+        -0.1285f,  -0.076f, 0.01f,    0.0f, 0.0f,
+        -0.091f,    0.05f,  0.01f,    0.0f, 0.0f,
+        -0.1285f,   0.05f,  0.01f,    0.0f, 0.0f,
     };
     
     indices_ = {
@@ -60,14 +60,25 @@ void Wrench::draw(){
 
     DrawableObject::draw();
 
+	glm::mat4 model;
+	model = glm::rotate(model, glm::radians(-55.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+
+	glm::mat4 view1;
+	view1 = glm::translate(view1, glm::vec3(0.0f, 0.0f, -3.0f));
+
+	glm::mat4 projection;
+	projection = glm::perspective(glm::radians(45.0f), 1.0f , 0.1f, 100.0f);
+
+	projection = projection * view1 * model * transformation_;
+
 	glUniformMatrix4fv(
 			glGetUniformLocation(programID_, "transform"),
 			1,
 			GL_FALSE,
-			glm::value_ptr(transformation_)
+			glm::value_ptr(projection)
 	);
 
-    glDrawElements(GL_TRIANGLES, 33, GL_UNSIGNED_INT, 0);
+    glDrawElements(GL_TRIANGLES, indices_.size(), GL_UNSIGNED_INT, 0);
     
     glBindVertexArray(0);
     
