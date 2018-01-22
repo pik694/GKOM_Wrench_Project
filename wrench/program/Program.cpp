@@ -20,6 +20,7 @@
 #include <graphics/objects/Wrench.hpp>
 #include <graphics/objects/Wall.h>
 #include <graphics/Camera.h>
+#include <graphics/objects/Room.h>
 
 #include "Program.hpp"
 #include "graphics/ShaderProgram.hpp"
@@ -70,73 +71,75 @@ void Program::run() {
 	graphics::Texture workshopTexture(
 			"/Users/piotr/Developer/GKOM_Wrench/wrench/graphics/textures/workshop_texture.jpg"
 	);
-	graphics::Texture wallTexture(
-			"/Users/piotr/Developer/GKOM_Wrench/wrench/graphics/textures/wall_texture.jpg"
+	graphics::Texture toolsWallTexture(
+			"/Users/piotr/Developer/GKOM_Wrench/wrench/graphics/textures/tools_texture.jpg"
 	);
+
+	graphics::Texture wallTexture (
+			"/Users/piotr/Developer/GKOM_Wrench/wrench/graphics/textures/tools_texture.jpg"
+
+	);
+
+	graphics::Texture floorTexture{
+			"/Users/piotr/Developer/GKOM_Wrench/wrench/graphics/textures/floor_texture.jpg"
+	};
 
 	graphics::ShaderProgram colourProgram (
 			"/Users/piotr/Developer/GKOM_Wrench/wrench/graphics/shaders/colour_vertex.glsl",
 			"/Users/piotr/Developer/GKOM_Wrench/wrench/graphics/shaders/colour_fragment.glsl"
 	);
 
+	graphics::objects::Room room;
 
-	graphics::objects::Workshop workshop;
-	graphics::objects::Wall wall;
-	graphics::objects::Screw screw;
-	graphics::objects::Wrench wrench;
+	room.setShaders(textureProgram.getProgramID());
+	room.setWallTextures(wallTexture.getTextureID());
+	room.setFloorTexture(floorTexture.getTextureID());
 
-	graphics::objects::Wrench::WRENCH = &wrench;
-	wrench.setScrew(&screw);
 
-	workshop.setShaders(textureProgram.getProgramID());
-	workshop.setTexture(workshopTexture.getTextureID());
-
-	wall.setShaders(textureProgram.getProgramID());
-	wall.setTexture(wallTexture.getTextureID());
-
-	screw.setShaders(colourProgram.getProgramID());
-	wrench.setShaders(colourProgram.getProgramID());
+//	graphics::objects::Workshop workshop;
+//	graphics::objects::Wall wall;
+//	graphics::objects::Screw screw;
+//	graphics::objects::Wrench wrench;
+//
+//	graphics::objects::Wrench::WRENCH = &wrench;
+//	wrench.setScrew(&screw);
+//
+//	workshop.setShaders(textureProgram.getProgramID());
+//	workshop.setTexture(workshopTexture.getTextureID());
+//
+//	wall.setShaders(textureProgram.getProgramID());
+//	wall.setTexture(wallTexture.getTextureID());
+//
+//	screw.setShaders(colourProgram.getProgramID());
+//	wrench.setShaders(colourProgram.getProgramID());
 
 	glEnable(GL_DEPTH_TEST);
 
 
-	glm::mat4 model  = glm::rotate(glm::mat4(), glm::radians(-70.0f), glm::vec3(1.0, 0,0));
-	glm::mat4 view = glm::translate(glm::mat4(), glm::vec3(0, 0.0f, -3.0f));
-	glm::mat4 projection = glm::perspective(glm::radians(45.0f), 1.0f, 0.1f, 100.0f);
-
-	float zoom = 45.0f;
-	bool flag = true;
+	glm::mat4 projection = glm::perspective(glm::radians(30.0f), 1.0f, 0.1f, 100.0f);
 
 	while (!window_->shouldClose()) {
 
 		glfwPollEvents();
 
-		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+		glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		wrench.updatePosition();
+//		wrench.updatePosition();
 
-//		if(flag){
-//			zoom += 1.0f;
-//			if (zoom >= 90.0f){
-//				flag = false;
-//			}
-//		}
-//		else{
-//			zoom -= 1.0f;
-//			if (zoom <= 0.0f){
-//				flag = true;
-//			}
-//		}
-//
-//		projection = glm::perspective(glm::radians(zoom), 1.0f, 0.1f, 100.0f);
+		glm::mat4 view;
+		float radius = 10.0f;
+		float cam   = cos(glfwGetTime()) * radius;
+		view = glm::lookAt(glm::vec3(5, 0, 3), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f));
 
-		glm::mat4 camera = projection * view * model;
+		glm::mat4 camera = projection * view;
 
-		workshop.draw(camera);
-		wall.draw(camera);
-		screw.draw(camera);
-		wrench.draw(camera);
+		room.draw(camera);
+
+//		workshop.draw(camera);
+//		wall.draw(camera);
+//		screw.draw(camera);
+//		wrench.draw(camera);
 
 		window_->swapBuffers();
 

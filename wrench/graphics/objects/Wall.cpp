@@ -11,19 +11,19 @@ using namespace wrench::graphics::objects;
 
 Wall::Wall() {
 
-	model_ = glm::scale(model_, glm::vec3(2,1.5,2));
 
 	vertices_ = {
-			1.0f,  1.0f, 0.0f,      0.0f, 1.0f,
-		   -1.0f,  1.0f, 0.0f,      1.0f, 1.0f,
-		    1.0f,  1.0f, 1.0f,      0.0f, 0.0f,
-		   -1.0f,  1.0f, 1.0f,      1.0f, 0.0f,
+			1.0f,   1.0f, 0.0f,      1.0f, 1.0f,
+		    1.0f,  -1.0f, 0.0f,      1.0f, 0.0f,
+		   -1.0f,  -1.0f, 0.0f,      0.0f, 0.0f,
+		   -1.0f,   1.0f, 0.0f,      0.0f, 1.0f,
 	};
 
 	indices_ = {
 			0,1,2,
-			1,3,2
+			0,2,3
 	};
+
 
 
 	init();

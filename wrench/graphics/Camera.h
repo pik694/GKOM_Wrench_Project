@@ -16,9 +16,13 @@ public:
 	void moveLeft();
 	void moveRight();
 
+	void ZoomIn();
+	void ZoomOut();
+
 	glm::mat4 getView();
 
 private:
+
 
 
 

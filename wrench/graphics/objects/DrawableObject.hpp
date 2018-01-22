@@ -30,6 +30,10 @@ namespace wrench {
                 virtual void draw();
 
 	            virtual void draw(glm::mat4 view) = 0;
+
+	            virtual void scale(glm::vec3 scale);
+	            virtual void rotate(float degrees, glm::vec3 axis);
+	            virtual void translate(glm::vec3 vector);
                 
                 virtual ~DrawableObject();
 

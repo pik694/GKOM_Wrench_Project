@@ -12,7 +12,7 @@ Texture::Texture(const std::string &textureFile) {
 
 	int width, height;
 
-	auto image = SOIL_load_image(textureFile.c_str(), &width, &height, 0, SOIL_LOAD_AUTO);
+	auto image = SOIL_load_image(textureFile.c_str(), &width, &height, 0, SOIL_LOAD_RGB);
 
 	if (image == nullptr)
 		throw std::runtime_error("Could not open texture");

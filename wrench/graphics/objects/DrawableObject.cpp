@@ -165,6 +165,18 @@ void DrawableObject::addNormalVectorsToVertices() {
 
 }
 
+void DrawableObject::scale(glm::vec3 scale) {
+	model_ = glm::scale(model_, scale);
+}
+
+void DrawableObject::rotate(float degrees, glm::vec3 axis) {
+	model_ = glm::rotate(model_, glm::radians(degrees), axis);
+}
+
+void DrawableObject::translate(glm::vec3 vector) {
+	model_ = glm::translate(model_, vector);
+}
+
 
 float DrawableObject::AMBIENT_STRENGTH = 1.0f;
 glm::vec3 DrawableObject::AMBIENT_LIGHT_COLOUR(1.0, 1.0, 1.0);
