@@ -1,48 +1,33 @@
 //
-// Created by Piotr Żelazko on 21.01.2018.
+// Created by Piotr Żelazko on 22.01.2018.
 //
 
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtc/matrix_transform.hpp>
-#include "Workshop.h"
+#include "Wall.h"
 
 
 using namespace wrench::graphics::objects;
 
-
-Workshop::Workshop() {
+Wall::Wall() {
 
 	vertices_ = {
-			// positions          // texture coords
-			 1.0f,  1.0f, 0.0f,      0.95f, 0.95f, // top right
-			 1.0f, -1.0f, 0.0f,      0.95f, 0.05f, // bottom right
-			 -1.0f, -1.0f, 0.0f,      0.05f, 0.05f, // bottom left
-			 -1.0f,  1.0f, 0.0f,      0.05f, 0.95f,  // top left
+			1.0f,  1.0f, 0.0f,      0.0f, 1.0f,
+		   -1.0f,  1.0f, 0.0f,      1.0f, 1.0f,
+		    1.0f,  1.0f, 1.0f,      0.0f, 0.0f,
+		   -1.0f,  1.0f, 1.0f,      1.0f, 0.0f,
+	};
 
-			 1.0f,  1.0f, -0.1f,     1.0f, 1.0f,
-			 1.0f, -1.0f, -0.1f,     1.0f, 0.0f,
-			-1.0f, -1.0f, -0.1f,     0.0f, 0.0f,
-			-1.0f,  1.0f, -0.1f,     0.0f, 1.0f,
-	};
 	indices_ = {
-			0, 1, 3,
-			1, 2, 3,
-			0, 1, 4,
-			1, 4, 5,
-			1, 2, 6,
-			1, 5, 6,
-			2, 3, 6,
-			7, 3, 6,
-			7, 3, 4,
-			3, 0, 4,
+			0,1,2,
+			1,2,3
 	};
+
 
 	init();
-
 }
 
-
-void Workshop::draw() {
+void Wall::draw() {
 
 	DrawableObject::draw();
 
@@ -87,4 +72,6 @@ void Workshop::draw() {
 	glDrawElements(GL_TRIANGLES, (GLsizei) indices_.size(), GL_UNSIGNED_INT, 0);
 
 	glBindVertexArray(0);
+
+
 }

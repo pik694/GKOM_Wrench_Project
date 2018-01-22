@@ -18,6 +18,7 @@
 #include <graphics/Texture.h>
 #include <graphics/objects/Screw.hpp>
 #include <graphics/objects/Wrench.hpp>
+#include <graphics/objects/Wall.h>
 
 #include "Program.hpp"
 #include "graphics/ShaderProgram.hpp"
@@ -68,6 +69,9 @@ void Program::run() {
 	graphics::Texture workshopTexture(
 			"/Users/piotr/Developer/GKOM_Wrench/wrench/graphics/textures/workshop_texture.jpg"
 	);
+	graphics::Texture wallTexture(
+			"/Users/piotr/Developer/GKOM_Wrench/wrench/graphics/textures/wall_texture.jpg"
+	);
 
 	graphics::ShaderProgram wrenchProgram (
 			"/Users/piotr/Developer/GKOM_Wrench/wrench/graphics/shaders/wrench_vertex.glsl",
@@ -76,6 +80,7 @@ void Program::run() {
 
 
 	graphics::objects::Workshop workshop;
+	graphics::objects::Wall wall;
 	graphics::objects::Screw screw;
 	graphics::objects::Wrench wrench;
 
@@ -84,6 +89,9 @@ void Program::run() {
 
 	workshop.setShaders(workshopProgram.getProgramID());
 	workshop.setTexture(workshopTexture.getTextureID());
+
+	wall.setShaders(workshopProgram.getProgramID());
+	wall.setTexture(wallTexture.getTextureID());
 
 	screw.setShaders(wrenchProgram.getProgramID());
 	wrench.setShaders(wrenchProgram.getProgramID());
@@ -106,6 +114,7 @@ void Program::run() {
 		wrench.updatePosition();
 
 		workshop.draw();
+		wall.draw();
 		screw.draw();
 		wrench.draw();
 
