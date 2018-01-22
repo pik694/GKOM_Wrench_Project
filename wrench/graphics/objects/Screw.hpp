@@ -22,14 +22,12 @@ namespace wrench {
                 
                 Screw();
 
-	            void draw() override;
+	            void draw(glm::mat4 view) override;
 
                 void rotate(float degree);
                 
                 ~Screw() override = default;
 
-            private:
-                glm::mat4 transformation_;
             };
         }
     }

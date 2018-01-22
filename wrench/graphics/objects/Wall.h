@@ -8,16 +8,19 @@
 
 #include "DrawableObject.hpp"
 
-namespace wrench::graphics::objects{
-	class Wall : public  DrawableObject{
-	public:
-		Wall();
+namespace wrench {
+	namespace graphics{
+		namespace objects{
+			class Wall : public  DrawableObject{
+			public:
+				Wall();
 
-		void draw() override;
+				void draw(glm::mat4 view) override;
 
-		~Wall() override  = default;
-	};
+				~Wall() override  = default;
+			};
+		}
+	}
 }
-
 
 #endif //GKOM_WRENCH_WALL_H

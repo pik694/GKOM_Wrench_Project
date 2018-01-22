@@ -14,6 +14,9 @@
 using namespace wrench::graphics::objects;
 
 Screw::Screw(){
+
+	model_ = glm::scale(model_, glm::vec3(1,1,5));
+
     vertices_ = {
          0.0f,     0.1f,   0.01f,    0.0f, 0.0f,
          0.0866f,  0.05f,  0.01f,    0.0f, 0.0f,
@@ -61,37 +64,40 @@ Screw::Screw(){
 
 }
 
-void Screw::draw(){
+void Screw::draw(glm::mat4 view){
 
     DrawableObject::draw();
 
-	glm::mat4 model;
-	model = glm::rotate(model, glm::radians(-70.0f), glm::vec3(1.0f, 0.0f, 0.0f));
-
-	glm::mat4 view1;
-	view1 = glm::translate(view1, glm::vec3(0.0f, 0.0f, -3.0f));
-
-	glm::mat4 projection;
-	projection = glm::perspective(glm::radians(45.0f), 1.0f , 0.1f, 100.0f);
-
-	projection = projection * view1 * model * transformation_;
-
-
     glUniformMatrix4fv(
-            glGetUniformLocation(programID_, "transform"),
+            glGetUniformLocation(programID_, "model"),
             1,
             GL_FALSE,
-            glm::value_ptr(projection)
+            glm::value_ptr(model_)
     );
 
-    glDrawElements(GL_TRIANGLES, indices_.size(), GL_UNSIGNED_INT, 0);
+	glUniformMatrix4fv(
+			glGetUniformLocation(programID_, "view"),
+			1,
+			GL_FALSE,
+			glm::value_ptr(view)
+	);
+
+	glm::vec3 colour (0,1,0);
+
+	glUniform3fv(
+		glGetUniformLocation(programID_, "objectColour"),
+		1,
+		glm::value_ptr(colour)
+	);
+
+    glDrawElements(GL_TRIANGLES, (GLsizei) indices_.size(), GL_UNSIGNED_INT, 0);
     
     glBindVertexArray(0);
     
 }
 
 void Screw::rotate(float degree) {
-    transformation_ = glm::rotate(transformation_, glm::radians(degree), glm::vec3(0,0,1));
+    model_ = glm::rotate(model_, glm::radians(degree), glm::vec3(0,0,1));
 }
 
 

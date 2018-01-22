@@ -22,6 +22,9 @@ Wrench::Wrench():
 	movementDistance_(0),
 	screw_(nullptr)
 {
+
+	model_ = glm::scale(model_, glm::vec3(1,1,0.5));
+
     vertices_ = {
          0.091f,    0.05f,  0.115f,    0.0f, 0.0f,
          0.1285f,   0.05f,  0.115f,    0.0f, 0.0f,
@@ -97,27 +100,32 @@ Wrench::Wrench():
 
 }
 
-void Wrench::draw(){
+void Wrench::draw(glm::mat4 view){
 
     DrawableObject::draw();
 
-	glm::mat4 model;
-	model = glm::rotate(model, glm::radians(-70.0f), glm::vec3(1.0f, 0.0f, 0.0f));
-
-	glm::mat4 view1;
-	view1 = glm::translate(view1, glm::vec3(0.0f, 0.0f, -3.0f));
-
-	glm::mat4 projection;
-	projection = glm::perspective(glm::radians(45.0f), 1.0f , 0.1f, 100.0f);
-
-	projection = projection * view1 * model * transformation_;
-
 	glUniformMatrix4fv(
-			glGetUniformLocation(programID_, "transform"),
+			glGetUniformLocation(programID_, "model"),
 			1,
 			GL_FALSE,
-			glm::value_ptr(projection)
+			glm::value_ptr(model_)
 	);
+
+	glUniformMatrix4fv(
+			glGetUniformLocation(programID_, "view"),
+			1,
+			GL_FALSE,
+			glm::value_ptr(view)
+	);
+
+	glm::vec3 colour (0,0,1);
+
+	glUniform3fv(
+			glGetUniformLocation(programID_, "objectColour"),
+			1,
+			glm::value_ptr(colour)
+	);
+
 
     glDrawElements(GL_TRIANGLES, indices_.size(), GL_UNSIGNED_INT, 0);
     
@@ -131,12 +139,12 @@ void Wrench::updatePosition() {
 		case MovementState_E::none:
 			break;
 		case MovementState_E::rotateLeft:
-			transformation_ = glm::rotate(transformation_, glm::radians(ROTATION_STEP), glm::vec3(0,0,1));
+			model_ = glm::rotate(model_, glm::radians(ROTATION_STEP), glm::vec3(0,0,1));
 			screw_->rotate(ROTATION_STEP);
 			rotation_ += ROTATION_STEP;
 			break;
 		case MovementState_E::rotateRight:
-			transformation_ = glm::rotate(transformation_, glm::radians(-ROTATION_STEP), glm::vec3(0,0,1));
+			model_ = glm::rotate(model_, glm::radians(-ROTATION_STEP), glm::vec3(0,0,1));
 			screw_->rotate(-ROTATION_STEP);
 			rotation_ -= ROTATION_STEP;
 			break;
@@ -145,7 +153,7 @@ void Wrench::updatePosition() {
 				movementState_ = MovementState_E::none;
 			}
 			else{
-				transformation_ = transformation_ + glm::mat4(
+				model_ = model_ + glm::mat4(
 						glm::vec4(0, 0, 0, 0),
 						glm::vec4(0, 0, 0, 0),
 						glm::vec4(0, 0, 0, 0),
@@ -163,7 +171,7 @@ void Wrench::updatePosition() {
 				movementState_ = MovementState_E::none;
 			}
 			else{
-				transformation_ = transformation_ + glm::mat4(
+				model_ = model_ + glm::mat4(
 						glm::vec4(0, 0, 0, 0),
 						glm::vec4(0, 0, 0, 0),
 						glm::vec4(0, 0, 0, 0),

@@ -7,62 +7,155 @@
 //
 
 #include "DrawableObject.hpp"
+#include <glm/gtc/type_ptr.hpp>
+#include <glm/gtc/matrix_transform.hpp>
 
 using namespace wrench::graphics::objects;
 
 
-DrawableObject::DrawableObject(){
-    
-    glGenBuffers(1, &VBO_);
-    glGenBuffers(1, &EBO_);
-    glGenVertexArrays(1, &VAO_);
-    
+DrawableObject::DrawableObject() {
+
+	glGenBuffers(1, &VBO_);
+	glGenBuffers(1, &EBO_);
+	glGenVertexArrays(1, &VAO_);
+
 }
 
 void DrawableObject::init() {
 
-    glBindVertexArray(VAO_);
+	addNormalVectorsToVertices();
 
-    glBindBuffer(GL_ARRAY_BUFFER, VBO_);
-    glBufferData(GL_ARRAY_BUFFER, vertices_.size() * sizeof(float), vertices_.data(), GL_STATIC_DRAW);
+	glBindVertexArray(VAO_);
 
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO_);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices_.size() * sizeof(GLuint), indices_.data(), GL_STATIC_DRAW);
+	glBindBuffer(GL_ARRAY_BUFFER, VBO_);
+	glBufferData(GL_ARRAY_BUFFER, vertices_.size() * sizeof(float), vertices_.data(), GL_STATIC_DRAW);
 
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), nullptr);
-    glEnableVertexAttribArray(0);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO_);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices_.size() * sizeof(GLuint), indices_.data(), GL_STATIC_DRAW);
 
-    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*) (3 * sizeof(float)) );
-    glEnableVertexAttribArray(1);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), nullptr);
+	glEnableVertexAttribArray(0);
 
-    glBindVertexArray(0);
+	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void *) (6 * sizeof(float)));
+	glEnableVertexAttribArray(1);
+
+	glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void *) (3 * sizeof(float)));
+	glEnableVertexAttribArray(2);
+
+	glBindVertexArray(0);
 }
 
-void DrawableObject::setTexture(GLuint textureID){
-    textureID_ = textureID;
+void DrawableObject::setTexture(GLuint textureID) {
+	textureID_ = textureID;
 }
 
 
-void DrawableObject::setShaders(GLuint shadersProgramID){
-    programID_ = shadersProgramID;
+void DrawableObject::setShaders(GLuint shadersProgramID) {
+	programID_ = shadersProgramID;
 }
 
 void DrawableObject::draw() {
 
-    if (textureID_ != 0)
-        glBindTexture(GL_TEXTURE_2D, textureID_);
+	if (textureID_ != 0)
+		glBindTexture(GL_TEXTURE_2D, textureID_);
 
-    glUseProgram(programID_);
-    glBindVertexArray(VAO_);
+	glUseProgram(programID_);
+	glBindVertexArray(VAO_);
+
+	auto ambientLight = AMBIENT_STRENGTH * AMBIENT_LIGHT_COLOUR;
+
+	glUniform3fv(
+			glGetUniformLocation(programID_, "ambientLight"),
+			1,
+			glm::value_ptr(ambientLight)
+	);
 
 }
 
 
-DrawableObject::~DrawableObject(){
-    
-    glDeleteBuffers(1, &VBO_);
-    glDeleteBuffers(1, &EBO_);
-    
-    glDeleteVertexArrays(1, &VAO_);
-    
+DrawableObject::~DrawableObject() {
+
+	glDeleteBuffers(1, &VBO_);
+	glDeleteBuffers(1, &EBO_);
+
+	glDeleteVertexArrays(1, &VAO_);
+
 }
+
+
+void DrawableObject::addNormalVectorsToVertices() {
+
+
+	std::vector<float> vertices;
+	std::vector<GLuint> indices;
+	vertices.reserve(indices_.size() * 8);
+
+
+	for (int i = 0, j = 1, k = 2; j < indices_.size(); i += 3, j += 3, k += 3) {
+
+		glm::vec3 first (
+				vertices_.at(indices_.at(i)*5), vertices_.at(indices_.at(i)*5 + 1), vertices_.at(indices_.at(i)*5 + 2)
+		);
+
+		glm::vec3 second(
+				vertices_.at(indices_.at(j)*5), vertices_.at(indices_.at(j)*5 + 1), vertices_.at(indices_.at(j)*5 + 2)
+		);
+		glm::vec3 third (
+				vertices_.at(indices_.at(k)*5), vertices_.at(indices_.at(k)*5 + 1), vertices_.at(indices_.at(k)*5 + 2)
+		);
+
+
+		glm::vec3 normal = glm::cross(
+				second - first,
+				third - first
+		);
+
+		vertices.push_back(first.x);
+		vertices.push_back(first.y);
+		vertices.push_back(first.z);
+
+		vertices.push_back(normal.x);
+		vertices.push_back(normal.y);
+		vertices.push_back(normal.z);
+
+		vertices.push_back(vertices_.at(indices_.at(i)*5 + 3));
+		vertices.push_back(vertices_.at(indices_.at(i)*5 + 4));
+
+
+		vertices.push_back(second.x);
+		vertices.push_back(second.y);
+		vertices.push_back(second.z);
+
+		vertices.push_back(normal.x);
+		vertices.push_back(normal.y);
+		vertices.push_back(normal.z);
+
+		vertices.push_back(vertices_.at(indices_.at(j)*5 + 3));
+		vertices.push_back(vertices_.at(indices_.at(j)*5 + 4));
+
+		vertices.push_back(third.x);
+		vertices.push_back(third.y);
+		vertices.push_back(third.z);
+
+		vertices.push_back(normal.x);
+		vertices.push_back(normal.y);
+		vertices.push_back(normal.z);
+
+		vertices.push_back(vertices_.at(indices_.at(k)*5 + 3));
+		vertices.push_back(vertices_.at(indices_.at(k)*5 + 4));
+
+		indices.push_back(vertices.size() / 8 - 3);
+		indices.push_back(vertices.size() / 8 - 2);
+		indices.push_back(vertices.size() / 8 - 1);
+
+	}
+
+
+	vertices_ = vertices;
+	indices_ = indices;
+
+}
+
+
+float DrawableObject::AMBIENT_STRENGTH = 1.0f;
+glm::vec3 DrawableObject::AMBIENT_LIGHT_COLOUR(1.0, 1.0, 1.0);

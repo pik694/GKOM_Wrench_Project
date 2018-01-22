@@ -23,7 +23,7 @@ namespace wrench {
 
                 void setScrew(Screw* screw);
                 
-                void draw() override;
+                void draw(glm::mat4 view) override;
 
                 void rotateLeft();
                 void rotateRight();
@@ -45,8 +45,6 @@ namespace wrench {
                     moveForward,
                     moveBackward
                 } movementState_;
-
-                glm::mat4 transformation_;
 
                 Screw* screw_;
 

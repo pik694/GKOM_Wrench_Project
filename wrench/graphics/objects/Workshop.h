@@ -16,13 +16,9 @@ namespace wrench{
 
 				Workshop();
 
-				void draw() override ;
+				void draw(glm::mat4 view) override ;
 
 				~Workshop() override = default;
-
-			protected:
-
-
 
 			};
 		}

@@ -13,6 +13,7 @@
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 #include <vector>
+#include <glm/glm.hpp>
 
 
 namespace wrench {
@@ -27,23 +28,33 @@ namespace wrench {
                 virtual void setShaders(GLuint shadersProgramID);
                 
                 virtual void draw();
+
+	            virtual void draw(glm::mat4 view) = 0;
                 
                 virtual ~DrawableObject();
+
+	            static float AMBIENT_STRENGTH;
+	            static glm::vec3 AMBIENT_LIGHT_COLOUR;
                 
             protected:
                 
                 void init();
 
+	            void addNormalVectorsToVertices();
+
                 std::vector<float> vertices_;
                 std::vector<GLuint> indices_;
 
+	            glm::mat4 model_;
 
                 GLuint programID_;
 
                 GLuint textureID_;
                 
                 GLuint VBO_, VAO_, EBO_;
-                
+
+
+
             };
         }
     }

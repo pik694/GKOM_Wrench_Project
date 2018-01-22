@@ -19,6 +19,7 @@
 #include <graphics/objects/Screw.hpp>
 #include <graphics/objects/Wrench.hpp>
 #include <graphics/objects/Wall.h>
+#include <graphics/Camera.h>
 
 #include "Program.hpp"
 #include "graphics/ShaderProgram.hpp"
@@ -62,9 +63,9 @@ void Program::run() {
 
 	if (!window_) throw std::runtime_error("Window was not set");
 
-	graphics::ShaderProgram workshopProgram(
-			"/Users/piotr/Developer/GKOM_Wrench/wrench/graphics/shaders/workshop_vertex.glsl",
-			"/Users/piotr/Developer/GKOM_Wrench/wrench/graphics/shaders/workshop_fragment.glsl"
+	graphics::ShaderProgram textureProgram(
+			"/Users/piotr/Developer/GKOM_Wrench/wrench/graphics/shaders/texture_vertex.glsl",
+			"/Users/piotr/Developer/GKOM_Wrench/wrench/graphics/shaders/texture_fragment.glsl"
 	);
 	graphics::Texture workshopTexture(
 			"/Users/piotr/Developer/GKOM_Wrench/wrench/graphics/textures/workshop_texture.jpg"
@@ -73,9 +74,9 @@ void Program::run() {
 			"/Users/piotr/Developer/GKOM_Wrench/wrench/graphics/textures/wall_texture.jpg"
 	);
 
-	graphics::ShaderProgram wrenchProgram (
-			"/Users/piotr/Developer/GKOM_Wrench/wrench/graphics/shaders/wrench_vertex.glsl",
-			"/Users/piotr/Developer/GKOM_Wrench/wrench/graphics/shaders/wrench_fragment.glsl"
+	graphics::ShaderProgram colourProgram (
+			"/Users/piotr/Developer/GKOM_Wrench/wrench/graphics/shaders/colour_vertex.glsl",
+			"/Users/piotr/Developer/GKOM_Wrench/wrench/graphics/shaders/colour_fragment.glsl"
 	);
 
 
@@ -87,36 +88,55 @@ void Program::run() {
 	graphics::objects::Wrench::WRENCH = &wrench;
 	wrench.setScrew(&screw);
 
-	workshop.setShaders(workshopProgram.getProgramID());
+	workshop.setShaders(textureProgram.getProgramID());
 	workshop.setTexture(workshopTexture.getTextureID());
 
-	wall.setShaders(workshopProgram.getProgramID());
+	wall.setShaders(textureProgram.getProgramID());
 	wall.setTexture(wallTexture.getTextureID());
 
-	screw.setShaders(wrenchProgram.getProgramID());
-	wrench.setShaders(wrenchProgram.getProgramID());
+	screw.setShaders(colourProgram.getProgramID());
+	wrench.setShaders(colourProgram.getProgramID());
 
 	glEnable(GL_DEPTH_TEST);
 
-	glm::vec3 cameraPos   = glm::vec3(0.0f, 0.0f,  3.0f);
-	glm::vec3 cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
-	glm::vec3 cameraUp    = glm::vec3(0.0f, 1.0f,  0.0f);
+
+	glm::mat4 model  = glm::rotate(glm::mat4(), glm::radians(-70.0f), glm::vec3(1.0, 0,0));
+	glm::mat4 view = glm::translate(glm::mat4(), glm::vec3(0, 0.0f, -3.0f));
+	glm::mat4 projection = glm::perspective(glm::radians(45.0f), 1.0f, 0.1f, 100.0f);
+
+	float zoom = 45.0f;
+	bool flag = true;
 
 	while (!window_->shouldClose()) {
 
 		glfwPollEvents();
 
-		glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-		glm::mat4 view = glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
 
 		wrench.updatePosition();
 
-		workshop.draw();
-		wall.draw();
-		screw.draw();
-		wrench.draw();
+//		if(flag){
+//			zoom += 1.0f;
+//			if (zoom >= 90.0f){
+//				flag = false;
+//			}
+//		}
+//		else{
+//			zoom -= 1.0f;
+//			if (zoom <= 0.0f){
+//				flag = true;
+//			}
+//		}
+//
+//		projection = glm::perspective(glm::radians(zoom), 1.0f, 0.1f, 100.0f);
+
+		glm::mat4 camera = projection * view * model;
+
+		workshop.draw(camera);
+		wall.draw(camera);
+		screw.draw(camera);
+		wrench.draw(camera);
 
 		window_->swapBuffers();
 

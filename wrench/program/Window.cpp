@@ -74,6 +74,22 @@ void Window::keyCallback(GLFWwindow *window, int key, int scancode, int action, 
     else if (key == GLFW_KEY_RIGHT && action == GLFW_PRESS){
         graphics::objects::Wrench::WRENCH->rotateRight();
     }
+    else if (key == GLFW_KEY_F1 && action == GLFW_PRESS){
+
+        graphics::objects::DrawableObject::AMBIENT_STRENGTH -= 0.1;
+
+        if (graphics::objects::DrawableObject::AMBIENT_STRENGTH < 0.0)
+            graphics::objects::DrawableObject::AMBIENT_STRENGTH = 0.0;
+    }
+
+    else if (key == GLFW_KEY_F2 && action == GLFW_PRESS){
+
+        graphics::objects::DrawableObject::AMBIENT_STRENGTH += 0.1;
+
+        if (graphics::objects::DrawableObject::AMBIENT_STRENGTH > 1.0)
+            graphics::objects::DrawableObject::AMBIENT_STRENGTH = 1.0;
+    }
+
 
 }
 
