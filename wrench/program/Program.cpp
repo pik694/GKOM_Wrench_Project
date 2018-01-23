@@ -19,7 +19,6 @@
 #include <graphics/objects/Screw.hpp>
 #include <graphics/objects/Wrench.hpp>
 #include <graphics/objects/Wall.h>
-#include <graphics/Camera.h>
 #include <graphics/objects/Room.h>
 
 #include "Program.hpp"
@@ -47,7 +46,7 @@ void Program::init() {
 
 void Program::createWindow(const std::string &windowTitle, GLuint height, GLuint width) {
 
-	window_ = std::make_unique<window::Window>(width, height, windowTitle);
+	window_ = new window::Window(width, height, windowTitle);
 
 	glewExperimental = GL_TRUE;
 	GLenum status = glewInit();
@@ -75,16 +74,15 @@ void Program::run() {
 			"/Users/piotr/Developer/GKOM_Wrench/wrench/graphics/textures/tools_texture.jpg"
 	);
 
-	graphics::Texture wallTexture (
-			"/Users/piotr/Developer/GKOM_Wrench/wrench/graphics/textures/tools_texture.jpg"
-
+	graphics::Texture wallTexture(
+			"/Users/piotr/Developer/GKOM_Wrench/wrench/graphics/textures/brick.jpg"
 	);
 
 	graphics::Texture floorTexture{
 			"/Users/piotr/Developer/GKOM_Wrench/wrench/graphics/textures/floor_texture.jpg"
 	};
 
-	graphics::ShaderProgram colourProgram (
+	graphics::ShaderProgram colourProgram(
 			"/Users/piotr/Developer/GKOM_Wrench/wrench/graphics/shaders/colour_vertex.glsl",
 			"/Users/piotr/Developer/GKOM_Wrench/wrench/graphics/shaders/colour_fragment.glsl"
 	);
@@ -96,27 +94,32 @@ void Program::run() {
 	room.setFloorTexture(floorTexture.getTextureID());
 
 
-//	graphics::objects::Workshop workshop;
-//	graphics::objects::Wall wall;
-//	graphics::objects::Screw screw;
-//	graphics::objects::Wrench wrench;
-//
-//	graphics::objects::Wrench::WRENCH = &wrench;
-//	wrench.setScrew(&screw);
-//
-//	workshop.setShaders(textureProgram.getProgramID());
-//	workshop.setTexture(workshopTexture.getTextureID());
-//
-//	wall.setShaders(textureProgram.getProgramID());
-//	wall.setTexture(wallTexture.getTextureID());
-//
-//	screw.setShaders(colourProgram.getProgramID());
-//	wrench.setShaders(colourProgram.getProgramID());
+	graphics::objects::Workshop workshop;
+	graphics::objects::Wall wall;
+	graphics::objects::Screw screw;
+	graphics::objects::Wrench wrench;
+
+	graphics::objects::Wrench::WRENCH = &wrench;
+	wrench.setScrew(&screw);
+
+	workshop.setShaders(textureProgram.getProgramID());
+	workshop.setTexture(workshopTexture.getTextureID());
+
+	wall.setShaders(textureProgram.getProgramID());
+	wall.setTexture(toolsWallTexture.getTextureID());
+
+	wall.scale(glm::vec3(2,1,1));
+	wall.translate(glm::vec3(0, 1.49, 1));
+	wall.rotate(90.0f,glm::vec3(1,0,0));
+	wall.rotate(180.0f,glm::vec3(0,0,1));
+
+	screw.setShaders(colourProgram.getProgramID());
+	wrench.setShaders(colourProgram.getProgramID());
 
 	glEnable(GL_DEPTH_TEST);
 
 
-	glm::mat4 projection = glm::perspective(glm::radians(30.0f), 1.0f, 0.1f, 100.0f);
+	glm::mat4 projection = glm::perspective(glm::radians(45.0f), 1.0f, 0.1f, 100.0f);
 
 	while (!window_->shouldClose()) {
 
@@ -125,32 +128,74 @@ void Program::run() {
 		glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-//		wrench.updatePosition();
+		wrench.updatePosition();
 
-		glm::mat4 view;
-		float radius = 10.0f;
-		float cam   = cos(glfwGetTime()) * radius;
-		view = glm::lookAt(glm::vec3(5, 0, 3), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+		updateCamera();
 
-		glm::mat4 camera = projection * view;
+		float camX = CAMERA_DISTANCE * -sinf(glm::radians(CAMERA_ANGLE_X))*cosf(glm::radians(CAMERA_ANGLE_Y));
+		float camY = CAMERA_DISTANCE * -sinf(glm::radians(CAMERA_ANGLE_Y));
+		float camZ = CAMERA_DISTANCE * -cosf(glm::radians(CAMERA_ANGLE_X))*cosf(glm::radians(CAMERA_ANGLE_Y));
+
+		glm::mat4 camera = projection * glm::lookAt(glm::vec3(camX, camY, camZ),
+		                                            glm::vec3(0.0f, 0.0f, 0.0f),
+		                                            glm::vec3(0.0f, 0.0f, 1.0f));
 
 		room.draw(camera);
 
-//		workshop.draw(camera);
-//		wall.draw(camera);
-//		screw.draw(camera);
-//		wrench.draw(camera);
+		workshop.draw(camera);
+		wall.draw(camera);
+		screw.draw(camera);
+		wrench.draw(camera);
 
 		window_->swapBuffers();
 
 		usleep(200);
+
 	}
 
 
 }
 
 Program::~Program() {
+	delete window_;
 	glfwTerminate();
 }
 
 
+void Program::updateCamera() {
+
+	float cameraSpeed = 0.5f;
+
+	if (glfwGetKey(window_->getWindow(), GLFW_KEY_W) == GLFW_PRESS){
+		CAMERA_ANGLE_Y += cameraSpeed;
+		if (CAMERA_ANGLE_Y > 180.0){
+			CAMERA_ANGLE_Y = 180.0;
+		}
+	}
+	else if (glfwGetKey(window_->getWindow(), GLFW_KEY_S) == GLFW_PRESS){
+		CAMERA_ANGLE_Y -= cameraSpeed;
+		if (CAMERA_ANGLE_Y < 90.0){
+			CAMERA_ANGLE_Y = 90.0;
+		}
+	}
+	else if (glfwGetKey(window_->getWindow(), GLFW_KEY_A) == GLFW_PRESS){
+		CAMERA_ANGLE_X -= cameraSpeed;
+		if (CAMERA_ANGLE_X < -45.0){
+			CAMERA_ANGLE_X = -45.0f;
+		}
+	}
+	else if (glfwGetKey(window_->getWindow(), GLFW_KEY_D) == GLFW_PRESS){
+		CAMERA_ANGLE_X += cameraSpeed;
+		if (CAMERA_ANGLE_X > 45.0){
+			CAMERA_ANGLE_X = 45.0f;
+		}
+	}
+
+
+
+}
+
+
+float Program::CAMERA_ANGLE_X = 60;
+float Program::CAMERA_ANGLE_Y = 135;
+float Program::CAMERA_DISTANCE = 5;

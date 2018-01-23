@@ -31,8 +31,12 @@ namespace wrench{
                 
                 void swapBuffers();
                 bool shouldClose();
-                
-                
+
+
+                GLFWwindow* getWindow(){
+                    return window_;
+                };
+
             private:
                 void createWindow(GLuint width, GLuint height, const std::string& title);
                 

@@ -38,8 +38,10 @@ namespace wrench {
                 virtual ~DrawableObject();
 
 	            static float AMBIENT_STRENGTH;
+	            static float LIGHT_STRENGTH;
 	            static glm::vec3 AMBIENT_LIGHT_COLOUR;
-                
+	            static glm::vec3 LIGHT_COLOUR;
+
             protected:
                 
                 void init();

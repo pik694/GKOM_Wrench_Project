@@ -90,6 +90,22 @@ void Window::keyCallback(GLFWwindow *window, int key, int scancode, int action, 
             graphics::objects::DrawableObject::AMBIENT_STRENGTH = 1.0;
     }
 
+    else if (key == GLFW_KEY_F3 && action == GLFW_PRESS){
+
+        graphics::objects::DrawableObject::LIGHT_STRENGTH -= 0.1;
+
+        if (graphics::objects::DrawableObject::LIGHT_STRENGTH < 0.0)
+            graphics::objects::DrawableObject::LIGHT_STRENGTH = 0.0;
+    }
+
+    else if (key == GLFW_KEY_F4 && action == GLFW_PRESS){
+
+        graphics::objects::DrawableObject::LIGHT_STRENGTH += 0.1;
+
+        if (graphics::objects::DrawableObject::LIGHT_STRENGTH > 1.0)
+            graphics::objects::DrawableObject::LIGHT_STRENGTH = 1.0;
+    }
+
 
 }
 

@@ -63,7 +63,7 @@ void DrawableObject::draw() {
 	glBindVertexArray(VAO_);
 
 	auto ambientLight = AMBIENT_STRENGTH * AMBIENT_LIGHT_COLOUR;
-	glm::vec3 lightPos (1);
+	glm::vec3 lightPos (3,-2,-1);
 
 	glUniform3fv(
 			glGetUniformLocation(programID_, "ambientLight"),
@@ -75,6 +75,13 @@ void DrawableObject::draw() {
 			glGetUniformLocation(programID_, "lightPosition"),
 			1,
 			glm::value_ptr(lightPos)
+	);
+
+	auto light = LIGHT_STRENGTH * LIGHT_COLOUR;
+	glUniform3fv(
+			glGetUniformLocation(programID_, "lightColour"),
+			1,
+			glm::value_ptr(light)
 	);
 
 }
@@ -177,6 +184,7 @@ void DrawableObject::translate(glm::vec3 vector) {
 	model_ = glm::translate(model_, vector);
 }
 
-
-float DrawableObject::AMBIENT_STRENGTH = 1.0f;
+float DrawableObject::LIGHT_STRENGTH = 0.0f;
+float DrawableObject::AMBIENT_STRENGTH = 0.2f;
 glm::vec3 DrawableObject::AMBIENT_LIGHT_COLOUR(1.0, 1.0, 1.0);
+glm::vec3 DrawableObject::LIGHT_COLOUR(1.0, 1.0, 1.0);

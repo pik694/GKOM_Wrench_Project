@@ -28,9 +28,16 @@ namespace wrench{
             
             
             virtual ~Program();
-        private:
-            std::unique_ptr<window::Window> window_;
 
+            static float CAMERA_ANGLE_X;
+	        static float CAMERA_ANGLE_Y;
+	        static float CAMERA_DISTANCE;
+
+        private:
+
+	        void updateCamera();
+
+	        window::Window* window_;
 
             static const GLuint DEFAULT_HEIGHT;
             static const GLuint DEFAULT_WIDTH;
