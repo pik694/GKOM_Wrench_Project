@@ -145,7 +145,7 @@ void Program::run() {
 		workshop.draw(camera);
 		wall.draw(camera);
 		screw.draw(camera);
-		wrench.draw(camera);
+		wrench.draw(camera, glm::vec3(camX, camY, camZ));
 
 		window_->swapBuffers();
 

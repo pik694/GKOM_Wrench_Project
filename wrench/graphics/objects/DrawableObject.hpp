@@ -29,13 +29,13 @@ namespace wrench {
                 
                 virtual void draw();
 
-	            virtual void draw(glm::mat4 view) = 0;
+	            virtual void draw(glm::mat4 view){}
 
 	            virtual void scale(glm::vec3 scale);
 	            virtual void rotate(float degrees, glm::vec3 axis);
 	            virtual void translate(glm::vec3 vector);
                 
-                virtual ~DrawableObject();
+                virtual ~DrawableObject() = 0;
 
 	            static float AMBIENT_STRENGTH;
 	            static float LIGHT_STRENGTH;

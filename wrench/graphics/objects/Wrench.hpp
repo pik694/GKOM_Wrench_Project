@@ -23,7 +23,7 @@ namespace wrench {
 
                 void setScrew(Screw* screw);
                 
-                void draw(glm::mat4 view) override;
+                void draw(glm::mat4 view, glm::vec3 cameraPos);
 
                 void rotateLeft();
                 void rotateRight();

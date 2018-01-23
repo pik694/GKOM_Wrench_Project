@@ -100,7 +100,7 @@ Wrench::Wrench():
 
 }
 
-void Wrench::draw(glm::mat4 view){
+void Wrench::draw(glm::mat4 view, glm::vec3 cameraPos){
 
     DrawableObject::draw();
 
@@ -125,6 +125,41 @@ void Wrench::draw(glm::mat4 view){
 			1,
 			glm::value_ptr(colour)
 	);
+
+
+	auto ambientLight = AMBIENT_STRENGTH * AMBIENT_LIGHT_COLOUR;
+
+	glUniform3fv(
+			glGetUniformLocation(programID_, "material.ambient"),
+			1,
+			glm::value_ptr(glm::vec3(0.5, 0.5, 0.5))
+
+	);
+
+	glUniform3fv(
+			glGetUniformLocation(programID_, "material.diffuse"),
+			1,
+			glm::value_ptr(glm::vec3(0.5, 0.5, 0.5))
+	);
+
+	glUniform3fv(
+			glGetUniformLocation(programID_, "material.specular"),
+			1,
+			glm::value_ptr(glm::vec3(0.1, 0.1, 0.1))
+
+	);
+
+	glUniform1f(
+			glGetUniformLocation(programID_, "material.shininess"),
+			99.0f
+	);
+
+	glUniform3fv(
+			glGetUniformLocation(programID_, "viewPos"),
+			1,
+			glm::value_ptr(cameraPos)
+	);
+
 
 
     glDrawElements(GL_TRIANGLES, indices_.size(), GL_UNSIGNED_INT, 0);
